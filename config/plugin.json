@@ -1,6 +1,6 @@
 {
    "mass" : {
-      "release" : "latest",
+      "release" : "2",
       "host" : "localhost",
       "port" : 8095,
       "protocol" : "ws",
