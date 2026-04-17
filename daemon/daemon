@@ -8,4 +8,5 @@
 #fi
 
 # Start AS4H at Boot
-REPLACELBPBINDIR/mass_watchdog.pl --action=check --verbose=1
+REPLACELBPBINDIR/as_watchdog.pl --action=check --verbose=1
+REPLACELBPBINDIR/gw_watchdog.pl --action=check --verbose=1

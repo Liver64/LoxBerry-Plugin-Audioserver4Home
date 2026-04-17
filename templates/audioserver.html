@@ -117,6 +117,23 @@
 
 </style>
 
+<div class="servicestatus">
+	<div>
+		<TMPL_VAR "AUDIOSERVER.LABEL_SERVICE">
+	</div>
+	<div id="asservicestatusicon">
+		<img src="./images/unknown_20.png">
+	</div>
+	<div class="status" id="asservicestatus">
+		<TMPL_VAR "COMMON.HINT_UNKNOWN">
+	</div>
+	<div>
+		<a href="#" onclick="asservicerestart(); return false;" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-check ui-corner-all"><TMPL_VAR "COMMON.BUTTON_RESTART"></a>
+		<a href="#" onclick="asservicestop(); return false;" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-delete ui-corner-all"><TMPL_VAR "COMMON.BUTTON_STOP"></a>
+	</div>
+
+</div>
+
 <br>
 <br>
 <br>

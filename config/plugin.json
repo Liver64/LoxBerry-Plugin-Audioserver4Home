@@ -1,12 +1,12 @@
 {
-   "mass" : {
-      "release" : "2",
-      "host" : "localhost",
-      "port" : 8095,
-      "protocol" : "ws",
-      "internal" : 1
-   },
-   "mqtt" : {
-      "topic" : "audioserver4home"
-   }
+  "loxaudioserver": {
+    "internal": true,
+    "host": "localhost",
+    "port": 7090
+  },
+  "mqtt": {
+    "basetopic": "loxaudioserver",
+    "polling": 1,
+    "polling_slow": 60
+  }
 }

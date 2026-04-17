@@ -2,43 +2,43 @@
 
 $(function() {
 	
-	if (document.getElementById("massservicestatus")) {
-		interval = window.setInterval(function(){ massservicestatus(); }, 5000);
+	if (document.getElementById("asservicestatus")) {
+		interval = window.setInterval(function(){ asservicestatus(); }, 5000);
 	}
-	massservicestatus();
+	asservicestatus();
 	getconfig();
 
 });
 
 // MASS SERVICE STATE
 
-function massservicestatus(update) {
+function asservicestatus(update) {
 
 	if (update) {
-		$("#massservicestatus").attr("style", "background:#dfdfdf").html("<TMPL_VAR "COMMON.HINT_UPDATING">");
-		$("#massservicestatusicon").html("<img src='./images/unknown_20.png'>");
+		$("#asservicestatus").attr("style", "background:#dfdfdf").html("<TMPL_VAR "COMMON.HINT_UPDATING">");
+		$("#asservicestatusicon").html("<img src='./images/unknown_20.png'>");
 	}
 
 	$.ajax( { 
-			url:  'ajax.cgi',
+			url:  '<TMPL_VAR AJAX_URL>',
 			type: 'POST',
 			data: { 
-				action: 'massservicestatus'
+				action: 'asservicestatus'
 			}
 		} )
 	.fail(function( data ) {
 		console.log( "Servicestatus Fail", data );
-		$("#massservicestatus").attr("style", "background:#dfdfdf; color:red").html("<TMPL_VAR "COMMON.HINT_FAILED">");
-		$("#massservicestatusicon").html("<img src='./images/unknown_20.png'>");
+		$("#asservicestatus").attr("style", "background:#dfdfdf; color:red").html("<TMPL_VAR "COMMON.HINT_FAILED">");
+		$("#asservicestatusicon").html("<img src='./images/unknown_20.png'>");
 	})
 	.done(function( data ) {
 		console.log( "Servicestatus Success", data );
 		if (data.pid) {
-			$("#massservicestatus").attr("style", "background:#6dac20; color:black").html("<span class='small'>ID: " + data.pid + "</span>");
-			$("#massservicestatusicon").html("<img src='./images/check_20.png'>");
+			$("#asservicestatus").attr("style", "background:#6dac20; color:black").html("<span class='small'>ID: " + data.pid + "</span>");
+			$("#asservicestatusicon").html("<img src='./images/check_20.png'>");
 		} else {
-			$("#massservicestatus").attr("style", "background:#FF6339; color:black").html("<TMPL_VAR "COMMON.HINT_STOPPED">");
-			$("#massservicestatusicon").html("<img src='./images/error_20.png'>");
+			$("#asservicestatus").attr("style", "background:#FF6339; color:black").html("<TMPL_VAR "COMMON.HINT_STOPPED">");
+			$("#asservicestatusicon").html("<img src='./images/error_20.png'>");
 		}
 	})
 	.always(function( data ) {
@@ -48,16 +48,16 @@ function massservicestatus(update) {
 
 // MASS SERVICE RESTART
 
-function massservicerestart() {
+function asservicerestart() {
 
 	clearInterval(interval);
-	$("#massservicestatus").attr("style", "color:blue").html("<TMPL_VAR "COMMON.HINT_EXECUTING">");
-	$("#massservicestatusicon").html("<img src='./images/unknown_20.png'>");
+	$("#asservicestatus").attr("style", "color:blue").html("<TMPL_VAR "COMMON.HINT_EXECUTING">");
+	$("#asservicestatusicon").html("<img src='./images/unknown_20.png'>");
 	$.ajax( { 
-			url:  'ajax.cgi',
+			url:  '<TMPL_VAR AJAX_URL>',
 			type: 'POST',
 			data: { 
-				action: 'massservicerestart'
+				action: 'asservicerestart'
 			}
 		} )
 	.fail(function( data ) {
@@ -66,11 +66,11 @@ function massservicerestart() {
 	.done(function( data ) {
 		console.log( "Servicerestart Success", data );
 		if (data == "0") {
-			massservicestatus(1);
+			asservicestatus(1);
 		} else {
-			$("#massservicestatus").attr("style", "background:#dfdfdf; color:red").html("<TMPL_VAR "COMMON.HINT_FAILED">");
+			$("#asservicestatus").attr("style", "background:#dfdfdf; color:red").html("<TMPL_VAR "COMMON.HINT_FAILED">");
 		}
-		interval = window.setInterval(function(){ massservicestatus(); }, 5000);
+		interval = window.setInterval(function(){ asservicestatus(); }, 5000);
 	})
 	.always(function( data ) {
 		console.log( "Servicerestart Finished", data );
@@ -79,16 +79,16 @@ function massservicerestart() {
 
 // MASS SERVICE STOP
 
-function massservicestop() {
+function asservicestop() {
 
 	clearInterval(interval);
-	$("#massservicestatus").attr("style", "color:blue").html("<TMPL_VAR "COMMON.HINT_EXECUTING">");
-	$("#massservicestatusicon").html("<img src='./images/unknown_20.png'>");
+	$("#asservicestatus").attr("style", "color:blue").html("<TMPL_VAR "COMMON.HINT_EXECUTING">");
+	$("#asservicestatusicon").html("<img src='./images/unknown_20.png'>");
 	$.ajax( { 
-			url:  'ajax.cgi',
+			url:  '<TMPL_VAR AJAX_URL>',
 			type: 'POST',
 			data: { 
-				action: 'massservicestop'
+				action: 'asservicestop'
 			}
 		} )
 	.fail(function( data ) {
@@ -97,21 +97,15 @@ function massservicestop() {
 	.done(function( data ) {
 		console.log( "Servicestop Success", data );
 		if (data == "0") {
-			massservicestatus(1);
+			asservicestatus(1);
 		} else {
-			$("#massservicestatus").attr("style", "background:#dfdfdf; color:red").html("<TMPL_VAR "COMMON.HINT_FAILED">");
+			$("#asservicestatus").attr("style", "background:#dfdfdf; color:red").html("<TMPL_VAR "COMMON.HINT_FAILED">");
 		}
-		interval = window.setInterval(function(){ massservicestatus(); }, 5000);
+		interval = window.setInterval(function(){ asservicestatus(); }, 5000);
 	})
 	.always(function( data ) {
 		console.log( "Servicestop Finished", data );
 	});
-}
-
-// MASS Open WebUI
-
-function openMASS() {
-	window.open( $("#massurl").val(), "_blank" );
 }
 
 // PLUGIN GET CONFIG
@@ -120,7 +114,7 @@ function getconfig() {
 
 	// Ajax request
 	$.ajax({ 
-		url:  'ajax.cgi',
+		url:  '<TMPL_VAR AJAX_URL>',
 		type: 'POST',
 		data: {
 			action: 'getconfig'
@@ -132,15 +126,6 @@ function getconfig() {
 	.done(function( data ) {
 		console.log( "getconfig Success", data );
 		$("#main").css( 'visibility', 'visible' );
-
-		// Settings
-	//window.open( location.protocol + '//' + location.hostname + ':' + $("#masshttpport").val(), "_blank" );
-		$("#massport").val(data.mass.port);
-		if ( data.mass.internal ) {
-			$("#massurl").val(location.protocol + '//' + location.hostname + ':8095' );
-		} else {
-			$("#massurl").val( data.mass.protocol + "://" + data.mass.host + ":" + data.mass.port );
-		}
 	})
 	.always(function( data ) {
 		console.log( "getconfig Finished" );
@@ -154,7 +139,7 @@ function save_settings() {
 
 	$("#savinghint_settings").attr("style", "color:blue").html("<TMPL_VAR "COMMON.HINT_SAVING">");
 	$.ajax( { 
-			url:  'ajax.cgi',
+			url:  '<TMPL_VAR AJAX_URL>',
 			type: 'POST',
 			data: { 
 				action: 'savesettings',
@@ -189,7 +174,7 @@ function save_settings() {
 
 	$("#savinghint_settings").attr("style", "color:blue").html("<TMPL_VAR "COMMON.HINT_SAVING">");
 	$.ajax( { 
-			url:  'ajax.cgi',
+			url:  '<TMPL_VAR AJAX_URL>',
 			type: 'POST',
 			data: { 
 				action: 'savesensors',
@@ -250,4 +235,267 @@ function save_settings() {
 }
 
 */
+
+// ── Playermanager ────────────────────────────────────────────────────────────
+
+(function () {
+
+	// Only active on the playermanager page
+	if (!document.getElementById('pm-grid')) return;
+
+	var pm_data        = null;
+	var pm_open_id     = null;
+	var pm_standalone  = false;
+	var pm_tick_timer  = null;
+	var pm_tick_anchor = null;   // { elapsed, duration, ts }
+
+	/* ── Init ──────────────────────────────────────────────────── */
+
+	$(function () {
+		// ?zone=X → standalone detail page
+		var urlZone = new URLSearchParams(window.location.search).get('zone');
+		if (urlZone) {
+			pm_standalone = true;
+			pm_open_id    = parseInt(urlZone, 10);
+			$('#pm-wrapper').hide();
+			$('#pm-overlay').addClass('pm-open pm-standalone');
+		}
+
+		pm_load();
+		setInterval(pm_load, 2000);
+
+		// Click-outside-to-close only in normal popup mode
+		$('#pm-overlay').on('click', function (e) {
+			if (!pm_standalone && e.target === this) pm_close();
+		});
+	});
+
+	/* ── Data loading ──────────────────────────────────────────── */
+
+	function pm_load() {
+		$.ajax({
+			url:      '<TMPL_VAR AJAX_URL>',
+			type:     'POST',
+			data:     { action: 'getzones' },
+			dataType: 'json'
+		})
+		.done(function (data) {
+			if (!data.zones) {
+				// SHM file is empty ({}) – gateway has gone offline
+				pm_render([]);
+				$('#pm-statusbar').text('<TMPL_VAR "PLAYERMANAGER.HINT_GATEWAY_OFFLINE">');
+				return;
+			}
+			pm_data = data;
+			pm_render(data.zones || []);
+			$('#pm-statusbar').text(
+				'<TMPL_VAR "PLAYERMANAGER.HINT_UPDATED"> ' + pm_fmt_clock()
+			);
+			if (pm_open_id !== null) {
+				var z = pm_find(pm_open_id);
+				if (z) pm_update_detail(z);
+			}
+		})
+		.fail(function () {
+			$('#pm-statusbar').text('<TMPL_VAR "PLAYERMANAGER.HINT_NO_DATA">');
+		});
+	}
+
+	function pm_find(id) {
+		if (!pm_data || !pm_data.zones) return null;
+		return pm_data.zones.find(function (z) { return z.id == id; }) || null;
+	}
+
+	/* ── Grid rendering ────────────────────────────────────────── */
+
+	function pm_render(zones) {
+		var $grid    = $('#pm-grid');
+		var seen_ids = {};
+
+		zones.forEach(function (zone) {
+			seen_ids[zone.id] = true;
+			var $card = $grid.find('.pm-card[data-id="' + zone.id + '"]');
+
+			if ($card.length === 0) {
+				$card = pm_create_card(zone);
+				$grid.append($card);
+			}
+
+			pm_update_card($card, zone);
+		});
+
+		// Remove cards for zones no longer in data
+		$grid.find('.pm-card').each(function () {
+			if (!seen_ids[$(this).data('id')]) $(this).remove();
+		});
+	}
+
+	function pm_create_card(zone) {
+		var $card = $(
+			'<div class="pm-card" data-id="' + pm_esc(zone.id) + '">' +
+				'<div class="pm-dot"></div>' +
+				'<div class="pm-card-art">' +
+					'<img class="pm-card-art-img" src="" alt="">' +
+					'<div class="pm-card-art-ph">' +
+						'<span class="pm-stop-label"><TMPL_VAR "PLAYERMANAGER.LABEL_AUDIO_STOP"></span>' +
+						'<span class="pm-stop-sub"><TMPL_VAR "PLAYERMANAGER.LABEL_AUDIO_STOP_SUB"></span>' +
+					'</div>' +
+				'</div>' +
+				'<div class="pm-card-body">' +
+					'<div class="pm-card-zone"></div>' +
+					'<div class="pm-card-title"></div>' +
+					'<div class="pm-card-artist"></div>' +
+				'</div>' +
+			'</div>'
+		);
+
+		$card.on('click', function () { pm_open(zone.id); });
+		return $card;
+	}
+
+	function pm_update_card($card, zone) {
+		var playing = (zone.state === 'play');
+		var idle    = !zone.title && !zone.artist && !zone.station;
+
+		$card.toggleClass('pm-playing', playing);
+		$card.toggleClass('pm-idle',    idle);
+
+		// Cover art – only change src when URL actually changed
+		var $img = $card.find('.pm-card-art-img');
+		var $ph  = $card.find('.pm-card-art-ph');
+		var url  = zone.coverUrl || '';
+		if ($img.attr('src') !== url) {
+			if (url) {
+				$img.attr('src', url).show();
+				$ph.hide();
+			} else {
+				$img.attr('src', '').hide();
+				$ph.show();
+			}
+		}
+
+		$card.find('.pm-card-zone').text(zone.name || ('<TMPL_VAR "PLAYERMANAGER.LABEL_ZONE"> ' + zone.id));
+		$card.find('.pm-card-title').text(
+			idle ? '<TMPL_VAR "PLAYERMANAGER.LABEL_IDLE">' : (zone.title || zone.station || '')
+		);
+		$card.find('.pm-card-artist').text(zone.artist || '');
+	}
+
+	/* ── Detail view ───────────────────────────────────────────── */
+
+	function pm_open(id) {
+		pm_open_id = id;
+		var zone   = pm_find(id);
+		if (!zone) return;
+		$('#pm-overlay').addClass('pm-open');
+		pm_update_detail(zone);
+		// JQM inserts companion text inputs – hide them after enhancement
+		window.setTimeout(function () {
+			$('.pm-jqm-slider-wrap input[type="text"]').hide();
+		}, 50);
+	}
+
+	window.pm_close = function () {
+		pm_open_id = null;
+		if (pm_tick_timer) { clearInterval(pm_tick_timer); pm_tick_timer = null; }
+		$('#pm-overlay').removeClass('pm-open');
+	};
+
+	function pm_update_detail(zone) {
+		var url = zone.coverUrl || '';
+
+		// Cover art
+		$('#pm-art-blur').css('background-image', url ? 'url(' + url + ')' : 'none');
+		if (url) {
+			$('#pm-art-img').attr('src', url).show();
+			$('#pm-art-ph').hide();
+		} else {
+			$('#pm-art-img').hide().attr('src', '');
+			$('#pm-art-ph').show();
+		}
+
+		// Zone header
+		$('#pm-d-zone-text').text('<TMPL_VAR "PLAYERMANAGER.LABEL_ZONE"> ' + zone.id + ' | ' + (zone.name || ''));
+
+		// Track info
+		$('#pm-d-title').text(zone.title || zone.station || '—');
+		$('#pm-d-artist').text(zone.artist || '');
+		$('#pm-d-album').text(zone.album || '');
+		$('#pm-d-station').text(
+			(zone.station && zone.station !== zone.title) ? zone.station : ''
+		);
+
+		// Progress slider (JQM) – server values anchor the local tick
+		var sess     = (zone.tech && zone.tech.session) || {};
+		var elapsed  = parseFloat(sess.elapsed)  || 0;
+		var duration = parseFloat(sess.duration) || 0;
+		var playing  = (zone.state === 'play');
+
+		$('#pm-progress-duration').text(duration > 0 ? pm_fmt_time(duration) : '--:--');
+		$('#pm-progress-slider').attr('max', duration > 0 ? Math.round(duration) : 100);
+		pm_tick_start(elapsed, duration, playing);
+
+		// Hide the JQM companion text inputs (inserted by JQM widget)
+		$('.pm-jqm-slider-wrap input[type="text"]').hide();
+	}
+
+	/* ── Progress tick ─────────────────────────────────────────── */
+
+	function pm_tick_start(elapsed, duration, playing) {
+		// Stop any running ticker and re-anchor to fresh server values
+		if (pm_tick_timer) { clearInterval(pm_tick_timer); pm_tick_timer = null; }
+		pm_tick_anchor = { elapsed: elapsed, duration: duration, ts: Date.now() };
+		pm_tick_apply(elapsed);
+
+		// Only tick forward when playing and duration is known
+		if (!playing || duration <= 0) return;
+
+		pm_tick_timer = setInterval(function () {
+			if (pm_open_id === null) {
+				clearInterval(pm_tick_timer);
+				pm_tick_timer = null;
+				return;
+			}
+			var secs = pm_tick_anchor.elapsed + (Date.now() - pm_tick_anchor.ts) / 1000;
+			if (secs > pm_tick_anchor.duration) secs = pm_tick_anchor.duration;
+			pm_tick_apply(secs);
+		}, 1000);
+	}
+
+	function pm_tick_apply(secs) {
+		$('#pm-progress-elapsed').text(pm_fmt_time(secs));
+		$('#pm-progress-slider').val(Math.round(secs));
+		try { $('#pm-progress-slider').slider('refresh'); } catch (e) {}
+	}
+
+	/* ── Helpers ───────────────────────────────────────────────── */
+
+	function pm_state_label(state, power) {
+		if (state === 'play')    return '<TMPL_VAR "PLAYERMANAGER.LABEL_PLAYING">';
+		if (state === 'paused')  return '<TMPL_VAR "PLAYERMANAGER.LABEL_PAUSED">';
+		if (power === 'on')      return '<TMPL_VAR "PLAYERMANAGER.LABEL_READY">';
+		return '<TMPL_VAR "PLAYERMANAGER.LABEL_IDLE">';
+	}
+
+	function pm_fmt_time(sec) {
+		if (!sec && sec !== 0) return '--:--';
+		sec = Math.floor(sec);
+		return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+	}
+
+	function pm_fmt_clock() {
+		return new Date().toLocaleTimeString('de-DE',
+			{ hour: '2-digit', minute: '2-digit', second: '2-digit' });
+	}
+
+	function pm_esc(str) {
+		return String(str || '')
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;');
+	}
+
+}());
+
 </script>

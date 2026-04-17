@@ -1,122 +1,486 @@
 <style>
-.datahidden {
-	display:none;
+/* ── Playermanager – Zone Grid & Detail ──────────────────────── */
+
+#pm-wrapper {
+	max-width: 900px;
+	margin: 0 auto;
 }
 
-.tiny {
-	font-size:70%;
+#pm-statusbar {
+	font-size: 11px;
+	color: #bbb;
+	padding: 4px 0 8px;
+	min-height: 20px;
 }
 
-.small {
-	font-size:80%;
-}
-
-.middle {
-	font-size:120%;
-}
-
-.big {
-	font-size:250%;
-}
-
-.large {
-	font-size:400%;
-}
-
-.bold {
-	font-weight: bold;
-}
-
-.grayed {
-	color: gray;
-}
-
-.center {
-	text-align: center;
-}
-
-.grid {
+#pm-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-	grid-column-gap: 15px;
-	grid-row-gap: 15px;
+	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+	gap: 14px;
+	padding: 12px 0 24px;
+}
+
+/* ── Zone Card ───────────────────────────────────────────────── */
+
+.pm-card {
+	background: #fff;
+	border-radius: 10px;
+	overflow: hidden;
+	border: 1px solid #e2e2e2;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+	cursor: pointer;
+	transition: box-shadow 0.2s ease, transform 0.15s ease;
+	position: relative;
 	text-shadow: none;
 }
 
-.box { 
-	border: 1px solid black;
-	border-radius: 5px 5px 5px 5px;
-	padding: 5px;
+.pm-card:hover {
+	box-shadow: 0 6px 20px rgba(0,0,0,0.14);
+	transform: translateY(-3px);
 }
 
-.ui-collapsible .ui-btn {
-/*	background-color: #6dac20 !important;
-	color: white !important;
-	text-shadow: none !important;*/
-	border-radius: 5px 5px 5px 5px;
-	padding: 15px;
-	padding-left: 3.5em;
-	vertical-align: middle;
+
+.pm-card-art {
+	width: 100%;
+	padding-top: 100%;
+	position: relative;
+	background: #efefef;
+	overflow: hidden;
 }
 
-.boxrow {
+.pm-card-art-img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.pm-card-art-ph {
+	position: absolute;
+	inset: 0;
 	display: flex;
-	flex-flow: row wrap;
-	justify-content: center;
+	flex-direction: column;
 	align-items: center;
-	padding: 0;
+	justify-content: center;
+	gap: 2px;
+	background: #000;
+}
+
+.pm-stop-label {
+	font-size: 13px;
+	font-weight: 500;
+	color: #fff;
+	letter-spacing: 0.02em;
+	font-family: system-ui, -apple-system, sans-serif;
+	text-shadow: none;
+	line-height: 1;
+}
+
+.pm-stop-sub {
+	font-size: 9px;
+	font-weight: 700;
+	color: #fff;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	font-family: system-ui, -apple-system, sans-serif;
+	text-shadow: none;
+	line-height: 1;
+}
+
+.pm-card-body {
+	padding: 9px 11px 11px;
+	min-height: 68px;
+}
+
+.pm-card-zone {
+	font-size: 10px;
+	text-transform: uppercase;
+	letter-spacing: 0.9px;
+	color: #aaa;
+	margin-bottom: 3px;
+	font-weight: 600;
+}
+
+.pm-card-title {
+	font-size: 13px;
+	font-weight: 700;
+	color: #222;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.3;
+}
+
+.pm-card.pm-idle .pm-card-title {
+	color: #c0c0c0;
+	font-weight: 400;
+	font-style: italic;
+}
+
+.pm-card-artist {
+	font-size: 11px;
+	color: #888;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-top: 1px;
+}
+
+.pm-dot {
+	position: absolute;
+	top: 9px;
+	right: 9px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #ddd;
+	border: 2px solid #fff;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+	z-index: 2;
+}
+
+.pm-playing .pm-dot {
+	background: #6dac20;
+	animation: pm-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pm-pulse {
+	0%, 100% { box-shadow: 0 0 0 0 rgba(109,172,32,0.5), 0 1px 3px rgba(0,0,0,0.15); }
+	50%       { box-shadow: 0 0 0 5px rgba(109,172,32,0),  0 1px 3px rgba(0,0,0,0.15); }
+}
+
+/* ── Detail Overlay ──────────────────────────────────────────── */
+
+#pm-overlay {
+	display: none;
+	position: fixed;
+	inset: 0;
+	background: rgba(0,0,0,0.85);
+	z-index: 10000;
+	align-items: center;
+	justify-content: center;
+	-webkit-backdrop-filter: blur(8px);
+	backdrop-filter: blur(8px);
+}
+
+#pm-overlay.pm-open {
+	display: flex;
+}
+
+/* Standalone mode (?zone=X): no dark backdrop, close button hidden */
+#pm-overlay.pm-standalone {
+	background: none;
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+}
+
+#pm-overlay.pm-standalone #pm-close {
+	display: none;
+}
+
+#pm-detail {
+	background: #181818;
+	border-radius: 16px;
+	display: flex;
+	flex-direction: column;
+	width: 96%;
+	max-width: 1000px;
+	max-height: 96vh;
+	overflow: hidden;
+	position: relative;
+	box-shadow: 0 32px 80px rgba(0,0,0,0.9);
+	animation: pm-pop 0.22s cubic-bezier(0.34,1.56,0.64,1);
+	color: #fff;
+}
+
+@keyframes pm-pop {
+	from { opacity: 0; transform: scale(0.92); }
+	to   { opacity: 1; transform: scale(1); }
+}
+
+/* Zone name – full-width header */
+#pm-d-zone {
+	padding: 0 60px;
+	height: 62px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	font-size: 17px;
+	font-weight: 600;
+	color: #fff !important;
+	letter-spacing: 0.02em;
+	border-bottom: 1px solid rgba(255,255,255,0.10);
+	flex-shrink: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	background: transparent;
+	position: relative;
+}
+
+/* Art + Info row */
+#pm-detail-body {
+	display: flex;
+	flex: 1;
+	overflow: hidden;
+	min-height: 0;
+	padding: 24px;
+	gap: 28px;
+	align-items: flex-start;
+}
+
+/* Art column */
+#pm-art-col {
+	width: 400px;
+	height: 400px;
+	flex-shrink: 0;
+	position: relative;
+	overflow: hidden;
+	background: #111;
+	border-radius: 10px;
+}
+
+#pm-art-blur {
+	position: absolute;
+	inset: -30px;
+	background-size: cover;
+	background-position: center;
+	filter: blur(30px) brightness(0.3) saturate(1.4);
+	z-index: 0;
+}
+
+#pm-art-img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	z-index: 1;
+}
+
+#pm-art-ph {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	z-index: 1;
+	background: #000;
+}
+
+/* Info column */
+#pm-info-col {
+	flex: 1;
+	min-width: 0;
+	padding: 12px 8px 8px;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	background: transparent;
+}
+
+#pm-d-title {
+	font-size: 28px;
+	font-weight: 800;
+	color: #fff !important;
+	line-height: 1.2;
+	margin: 0 0 18px;
+	word-break: break-word;
+}
+
+#pm-d-artist {
+	font-size: 19px;
+	color: #fff !important;
+	margin: 0 0 14px;
+}
+
+#pm-d-album {
+	font-size: 16px;
+	color: #ccc !important;
+	margin: 0 0 10px;
+}
+
+#pm-d-station {
+	font-size: 16px;
+	color: #ccc !important;
 	margin: 0;
 }
 
-.boxitem {
-	text-align: center;
-	vertical-align: middle;
+/* ── JQM Slider rows ─────────────────────────────────────────── */
+
+#pm-controls {
+	margin-top: auto;
+	padding-top: 24px;
 }
 
-.servicestatus {
-	display: grid;
-	grid-template-columns: auto auto auto auto;
-	grid-template-rows: 1fr;
-	gap: 0px 10px;
-	justify-content: center;
-	justify-items: center;
+.pm-slider-row {
+	display: flex;
 	align-items: center;
-	text-shadow: none;
+	gap: 10px;
+	margin-bottom: 14px;
 }
 
-.collapsible {
-	display: grid;
-	grid-template-columns: auto auto auto auto;
-	grid-template-rows: 1fr;
-	gap: 0px 10px;
-	justify-content: left;
-	justify-items: left;
-	align-items: left;
-	text-shadow: none;
+.pm-slider-row:last-child {
+	margin-bottom: 0;
 }
 
-.margin {
-	margin: 10px;
+.pm-slider-label {
+	font-size: 12px;
+	color: #aaa !important;
+	white-space: nowrap;
+	flex-shrink: 0;
+	min-width: 34px;
 }
 
-.status {
-	padding: 7px;
-	box-sizing: border-box;
-	border-radius: 5px 5px 5px 5px;
-	background: #dfdfdf;
-	border: 1px solid #7E7E7E;
-	width: 170px;
-	text-align: center;
+.pm-slider-label.pm-right {
+	text-align: right;
 }
 
-.ui-popup-container
-{
-	width:  50%;
-	height: 80%;
+/* Wrapper that holds the JQM-enhanced slider */
+.pm-jqm-slider-wrap {
+	flex: 1;
+	min-width: 0;
+	pointer-events: none; /* readonly – no interaction */
 }
 
+/* Hide the companion text input JQM inserts */
+.pm-jqm-slider-wrap input[type="text"],
+.pm-jqm-slider-wrap .ui-slider-input {
+	display: none !important;
+	width: 0 !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	border: none !important;
+	visibility: hidden !important;
+}
+
+/* Make the JQM slider track fill the wrapper */
+.pm-jqm-slider-wrap .ui-slider,
+.pm-jqm-slider-wrap .ui-input-slider {
+	margin: 0 !important;
+	width: 100% !important;
+	display: block !important;
+}
+
+.pm-jqm-slider-wrap .ui-slider-track {
+	width: 100% !important;
+}
+
+/* Highlight bar color */
+.pm-jqm-slider-wrap .ui-slider-bg {
+	background: #6dac20 !important;
+}
+
+/* Close button – sits inside the header bar */
+#pm-close {
+	position: absolute;
+	top: 50%;
+	right: 16px;
+	transform: translateY(-50%);
+	background: rgba(255,255,255,0.08);
+	border: none;
+	color: #999;
+	font-size: 14px;
+	line-height: 1;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.15s, color 0.15s;
+	z-index: 10;
+}
+
+#pm-close:hover {
+	background: rgba(255,255,255,0.16);
+	color: #fff;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+
+@media (max-width: 700px) {
+	#pm-detail-body {
+		flex-direction: column;
+		align-items: stretch;
+		padding: 16px;
+		gap: 16px;
+	}
+	#pm-art-col {
+		width: 100%;
+		height: 260px;
+		border-radius: 8px;
+	}
+	#pm-info-col {
+		padding: 4px 4px 8px;
+	}
+	#pm-d-zone {
+		font-size: 14px;
+		height: 52px;
+	}
+	#pm-d-title {
+		font-size: 22px;
+		margin-bottom: 12px;
+	}
+	#pm-d-artist {
+		font-size: 16px;
+		margin-bottom: 10px;
+	}
+	#pm-d-album,
+	#pm-d-station {
+		font-size: 14px;
+	}
+}
 </style>
 
-<br>
-<br>
-<br>
+<!-- Zone Grid -->
+<div id="pm-wrapper">
+	<div id="pm-statusbar"></div>
+	<div id="pm-grid"></div>
+</div>
+
+<!-- Detail Overlay -->
+<div id="pm-overlay">
+	<div id="pm-detail">
+		<div id="pm-d-zone">
+			<span id="pm-d-zone-text"></span>
+			<button id="pm-close" onclick="pm_close()">&#x2715;</button>
+		</div>
+
+		<div id="pm-detail-body">
+			<div id="pm-art-col">
+				<div id="pm-art-blur"></div>
+				<img id="pm-art-img" src="" alt="Cover" style="display:none">
+				<div id="pm-art-ph">
+					<span class="pm-stop-label" style="font-size:26px;"><TMPL_VAR "PLAYERMANAGER.LABEL_AUDIO_STOP"></span>
+					<span class="pm-stop-sub" style="font-size:12px; letter-spacing:0.2em;"><TMPL_VAR "PLAYERMANAGER.LABEL_AUDIO_STOP_SUB"></span>
+				</div>
+			</div>
+
+			<div id="pm-info-col">
+				<div id="pm-d-title"></div>
+				<div id="pm-d-artist"></div>
+				<div id="pm-d-album"></div>
+				<div id="pm-d-station"></div>
+
+				<div id="pm-controls">
+					<!-- Progress -->
+					<div class="pm-slider-row">
+						<span id="pm-progress-elapsed" class="pm-slider-label">0:00</span>
+						<div class="pm-jqm-slider-wrap">
+							<input id="pm-progress-slider" type="range"
+							       min="0" max="100" value="0"
+							       data-highlight="true" data-mini="true">
+						</div>
+						<span id="pm-progress-duration" class="pm-slider-label pm-right">--:--</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -61,20 +61,15 @@ if ($q->{form} eq "playermanager") {
 	$template = LoxBerry::System::read_file($templatefile);
 	&form_playermanager();
 }
-elsif ($q->{form} eq "mass") {
-	$templatefile = "$lbptemplatedir/musicassistent.html";
+elsif ($q->{form} eq "audioserver") {
+	$templatefile = "$lbptemplatedir/audioserver.html";
 	$template = LoxBerry::System::read_file($templatefile);
-	&form_mass();
+	&form_audioserver();
 }
 elsif ($q->{form} eq "gateway") {
 	$templatefile = "$lbptemplatedir/gateway.html";
 	$template = LoxBerry::System::read_file($templatefile);
 	&form_gateway();
-}
-elsif ($q->{form} eq "text2speech") {
-	$templatefile = "$lbptemplatedir/text2speech.html";
-	$template = LoxBerry::System::read_file($templatefile);
-	&form_text2speech();
 }
 elsif ($q->{form} eq "logs") {
 	$templatefile = "$lbptemplatedir/log_settings.html";
@@ -108,7 +103,7 @@ sub form_playermanager
 # Form: Music Assistent
 ##########################################################################
 
-sub form_mass
+sub form_audioserver
 {
 	# Prepare template
 	&preparetemplate();
@@ -121,18 +116,6 @@ sub form_mass
 ##########################################################################
 
 sub form_gateway
-{
-	# Prepare template
-	&preparetemplate();
-
-	return();
-}
-
-##########################################################################
-# Form: Text2Speech
-##########################################################################
-
-sub form_text2speech
 {
 	# Prepare template
 	&preparetemplate();
@@ -175,13 +158,16 @@ sub preparetemplate
 
 	# Language File
 	%L = LoxBerry::System::readlanguage($templateout, "language.ini");
-	
-	# Url for MASS Webui
-	my $massurl;
-	if ( $cfg->{mass}->{internal} ) {
-		$massurl =  "http://" . LoxBerry::System::get_localip() . ":8095";
+
+	# ajax.cgi liegt im html-Verzeichnis (ohne Authentifizierung)
+	$templateout->param( AJAX_URL => "/plugins/$lbpplugindir/ajax.cgi" );
+
+	# Url for AS WebUI Url
+	my $asurl;
+	if ( $cfg->{loxaudioserver}->{internal} ) {
+		$asurl =  "http://" . LoxBerry::System::get_localip() . ":" . $cfg->{loxaudioserver}->{port};
 	} else {
-		$massurl = $cfg->{mass}->{protocol} . "://" . $cfg->{mass}->{host} . ":" . $cfg->{mass}->{port};
+		$asurl =  "http://" . $cfg->{loxaudioserver}->{host} . ":" . $cfg->{loxaudioserver}->{port};
 	}
 
 	# Navbar
@@ -191,20 +177,16 @@ sub preparetemplate
 	$navbar{20}{URL} = 'index.cgi?form=playermanager';
 	$navbar{20}{active} = 1 if $q->{form} eq "playermanager";
 
-	$navbar{30}{Name} = "$L{'COMMON.LABEL_MASS'}";
-	$navbar{30}{URL} = 'index.cgi?form=mass';
-	$navbar{30}{active} = 1 if $q->{form} eq "mass";
+	$navbar{30}{Name} = "$L{'COMMON.LABEL_AUDIOSERVER'}";
+	$navbar{30}{URL} = 'index.cgi?form=audioserver';
+	$navbar{30}{active} = 1 if $q->{form} eq "audioserver";
 
 	$navbar{40}{Name} = "$L{'COMMON.LABEL_GATEWAY'}";
 	$navbar{40}{URL} = 'index.cgi?form=gateway';
 	$navbar{40}{active} = 1 if $q->{form} eq "gateway";
 
-	$navbar{50}{Name} = "$L{'COMMON.LABEL_TEXT2SPEECH'}";
-	$navbar{50}{URL} = 'index.cgi?form=text2speech';
-	$navbar{50}{active} = 1 if $q->{form} eq "text2speech";
-
-	$navbar{60}{Name} = "$L{'COMMON.LABEL_MASS_WEBUI'}";
-	$navbar{60}{URL} = "$massurl";
+	$navbar{60}{Name} = "$L{'COMMON.LABEL_AS_WEBUI'}";
+	$navbar{60}{URL} = "$asurl";
 	$navbar{60}{target} = '_blank';
 	
 	$navbar{98}{Name} = "$L{'COMMON.LABEL_LOGS'}";
