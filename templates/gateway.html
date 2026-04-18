@@ -74,14 +74,29 @@
 }
 
 .servicestatus {
-	display: grid;
-	grid-template-columns: auto auto auto auto;
-	grid-template-rows: 1fr;
-	gap: 0px 10px;
+	display: flex;
+	flex-wrap: wrap;
 	justify-content: center;
-	justify-items: center;
 	align-items: center;
+	gap: 10px;
 	text-shadow: none;
+	padding: 6px 0;
+}
+
+.servicestatus-info {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.servicestatus-btns {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	justify-content: center;
+	align-items: center;
 }
 
 .collapsible {
@@ -100,12 +115,13 @@
 }
 
 .status {
-	padding: 7px;
+	padding: 7px 12px;
 	box-sizing: border-box;
 	border-radius: 5px 5px 5px 5px;
 	background: #dfdfdf;
 	border: 1px solid #7E7E7E;
-	width: 170px;
+	min-width: 130px;
+	max-width: 100%;
 	text-align: center;
 }
 
@@ -119,20 +135,15 @@
 
 
 <div class="servicestatus">
-	<div>
-		<TMPL_VAR "GATEWAY.LABEL_SERVICE">
+	<div class="servicestatus-info">
+		<div><TMPL_VAR "GATEWAY.LABEL_SERVICE"></div>
+		<div id="gwservicestatusicon"><img src="./images/unknown_20.png"></div>
+		<div class="status" id="gwservicestatus"><TMPL_VAR "COMMON.HINT_UNKNOWN"></div>
 	</div>
-	<div id="gwservicestatusicon">
-		<img src="./images/unknown_20.png">
-	</div>
-	<div class="status" id="gwservicestatus">
-		<TMPL_VAR "COMMON.HINT_UNKNOWN">
-	</div>
-	<div>
+	<div class="servicestatus-btns">
 		<a href="#" onclick="gwservicerestart(); return false;" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-check ui-corner-all"><TMPL_VAR "COMMON.BUTTON_RESTART"></a>
 		<a href="#" onclick="gwservicestop(); return false;" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-delete ui-corner-all"><TMPL_VAR "COMMON.BUTTON_STOP"></a>
 	</div>
-
 </div>
 
 <hr>
@@ -150,6 +161,13 @@
 <div data-role="fieldcontain">
 	<label for="gw_polling_slow"><TMPL_VAR "GATEWAY.LABEL_POLLING_SLOW"></label>
 	<input type="number" id="gw_polling_slow" name="gw_polling_slow" min="1" value="">
+</div>
+
+<div data-role="fieldcontain">
+	<label for="gw_miniserver"><TMPL_VAR "GATEWAY.LABEL_MINISERVER"></label>
+	<select id="gw_miniserver" name="gw_miniserver">
+		<option value=""><TMPL_VAR "GATEWAY.HINT_LOADING_MINISERVERS"></option>
+	</select>
 </div>
 
 <a href="#" onclick="gw_save_settings(); return false;" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-check ui-corner-all"><TMPL_VAR "COMMON.BUTTON_SAVE"></a>

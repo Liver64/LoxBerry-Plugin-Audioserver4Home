@@ -7,9 +7,17 @@ $(function() {
 		asservicestatus();
 	}
 
+	if (document.getElementById("as_version")) {
+		as_load_versions();
+	}
+
 	if (document.getElementById("gwservicestatus")) {
 		interval = window.setInterval(function(){ gwservicestatus(); }, 5000);
 		gwservicestatus();
+	}
+
+	if (document.getElementById("gw_miniserver")) {
+		gw_load_miniservers();
 	}
 
 	getconfig();
@@ -252,6 +260,42 @@ function getconfig() {
 
 }
 
+// AUDIOSERVER LOAD VERSIONS
+
+function as_load_versions() {
+
+	$.ajax({
+		url:      '<TMPL_VAR AJAX_URL>',
+		type:     'POST',
+		data:     { action: 'getversions' },
+		dataType: 'json'
+	})
+	.fail(function() {
+		console.log("as_load_versions Fail");
+		$("#as_version").empty().append(
+			$('<option>').val('').text('<TMPL_VAR "AUDIOSERVER.HINT_VERSIONS_FAILED">')
+		);
+		try { $("#as_version").selectmenu('refresh', true); } catch(e) {}
+	})
+	.done(function(data) {
+		console.log("as_load_versions Done", data);
+		var $sel = $("#as_version");
+		$sel.empty();
+		if (data.tags && data.tags.length > 0) {
+			$.each(data.tags, function(i, tag) {
+				$sel.append($('<option>').val(tag).text(tag));
+			});
+			if (data.current) {
+				$sel.val(data.current);
+			}
+		} else {
+			$sel.append($('<option>').val('').text('<TMPL_VAR "AUDIOSERVER.HINT_VERSIONS_FAILED">'));
+		}
+		try { $sel.selectmenu('refresh', true); } catch(e) {}
+	});
+
+}
+
 // AUDIOSERVER SAVE SETTINGS
 
 function as_save_settings() {
@@ -264,7 +308,8 @@ function as_save_settings() {
 				action:   'saveasettings',
 				internal: $("#as_internal").is(":checked") ? 1 : 0,
 				host:     $("#as_host").val(),
-				port:     $("#as_port").val()
+				port:     $("#as_port").val(),
+				version:  $("#as_version").val()
 			}
 		} )
 	.fail(function( data ) {
@@ -285,6 +330,38 @@ function as_save_settings() {
 
 }
 
+// GATEWAY LOAD MINISERVERS
+
+function gw_load_miniservers() {
+
+	$.ajax({
+		url:      '<TMPL_VAR AJAX_URL>',
+		type:     'POST',
+		data:     { action: 'getminiservers' },
+		dataType: 'json'
+	})
+	.fail(function() {
+		console.log("gw_load_miniservers Fail");
+	})
+	.done(function(data) {
+		console.log("gw_load_miniservers Done", data);
+		var $sel = $("#gw_miniserver");
+		$sel.empty();
+		if (data.miniservers && data.miniservers.length > 0) {
+			$.each(data.miniservers, function(i, ms) {
+				$sel.append($('<option>').val(ms.nr).text('#' + ms.nr + ' \u2013 ' + ms.name));
+			});
+			if (data.current) {
+				$sel.val(data.current);
+			}
+		} else {
+			$sel.append($('<option>').val('').text('<TMPL_VAR "GATEWAY.HINT_NO_MINISERVERS">'));
+		}
+		try { $sel.selectmenu('refresh', true); } catch(e) {}
+	});
+
+}
+
 // GATEWAY SAVE SETTINGS
 
 function gw_save_settings() {
@@ -297,7 +374,8 @@ function gw_save_settings() {
 				action:       'savegwsettings',
 				basetopic:    $("#gw_basetopic").val(),
 				polling:      $("#gw_polling").val(),
-				polling_slow: $("#gw_polling_slow").val()
+				polling_slow: $("#gw_polling_slow").val(),
+				miniserver:   $("#gw_miniserver").val()
 			}
 		} )
 	.fail(function( data ) {

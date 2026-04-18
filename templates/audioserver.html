@@ -74,14 +74,29 @@
 }
 
 .servicestatus {
-	display: grid;
-	grid-template-columns: auto auto auto auto;
-	grid-template-rows: 1fr;
-	gap: 0px 10px;
+	display: flex;
+	flex-wrap: wrap;
 	justify-content: center;
-	justify-items: center;
 	align-items: center;
+	gap: 10px;
 	text-shadow: none;
+	padding: 6px 0;
+}
+
+.servicestatus-info {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.servicestatus-btns {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	justify-content: center;
+	align-items: center;
 }
 
 .collapsible {
@@ -100,12 +115,13 @@
 }
 
 .status {
-	padding: 7px;
+	padding: 7px 12px;
 	box-sizing: border-box;
 	border-radius: 5px 5px 5px 5px;
 	background: #dfdfdf;
 	border: 1px solid #7E7E7E;
-	width: 170px;
+	min-width: 130px;
+	max-width: 100%;
 	text-align: center;
 }
 
@@ -118,20 +134,15 @@
 </style>
 
 <div class="servicestatus">
-	<div>
-		<TMPL_VAR "AUDIOSERVER.LABEL_SERVICE">
+	<div class="servicestatus-info">
+		<div><TMPL_VAR "AUDIOSERVER.LABEL_SERVICE"></div>
+		<div id="asservicestatusicon"><img src="./images/unknown_20.png"></div>
+		<div class="status" id="asservicestatus"><TMPL_VAR "COMMON.HINT_UNKNOWN"></div>
 	</div>
-	<div id="asservicestatusicon">
-		<img src="./images/unknown_20.png">
-	</div>
-	<div class="status" id="asservicestatus">
-		<TMPL_VAR "COMMON.HINT_UNKNOWN">
-	</div>
-	<div>
+	<div class="servicestatus-btns">
 		<a href="#" onclick="asservicerestart(); return false;" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-check ui-corner-all"><TMPL_VAR "COMMON.BUTTON_RESTART"></a>
 		<a href="#" onclick="asservicestop(); return false;" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-delete ui-corner-all"><TMPL_VAR "COMMON.BUTTON_STOP"></a>
 	</div>
-
 </div>
 
 <hr>
@@ -149,6 +160,13 @@
 <div data-role="fieldcontain">
 	<label for="as_port"><TMPL_VAR "AUDIOSERVER.LABEL_PORT"></label>
 	<input type="number" id="as_port" name="as_port" min="1" max="65535" value="">
+</div>
+
+<div data-role="fieldcontain">
+	<label for="as_version"><TMPL_VAR "AUDIOSERVER.LABEL_VERSION"></label>
+	<select id="as_version" name="as_version">
+		<option value=""><TMPL_VAR "AUDIOSERVER.HINT_LOADING_VERSIONS"></option>
+	</select>
 </div>
 
 <a href="#" onclick="as_save_settings(); return false;" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-check ui-corner-all"><TMPL_VAR "COMMON.BUTTON_SAVE"></a>

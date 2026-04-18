@@ -1,12 +1,13 @@
 {
-  "loxaudioserver": {
-    "internal": true,
-    "host": "localhost",
-    "port": 7090
-  },
-  "mqtt": {
-    "basetopic": "loxaudioserver",
-    "polling": 1,
-    "polling_slow": 60
-  }
+   "loxaudioserver" : {
+      "host" : "localhost",
+      "internal" : true,
+      "port" : 7090
+   },
+   "mqtt" : {
+      "basetopic" : "audioserver4home",
+      "miniserver" : 1,
+      "polling" : 1,
+      "polling_slow" : 60
+   }
 }

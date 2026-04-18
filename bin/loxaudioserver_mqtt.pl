@@ -61,18 +61,19 @@ LOGINF("lox-audioserver: http://$host:$port");
 LOGINF("MQTT Basetopic: $basetopic");
 
 # ---------------------------------------------------------------------------
-# Miniserver-Credentials (Miniserver #1)
+# Miniserver-Credentials
 # Pass_RAW / Admin_RAW enthalten das Klartext-Passwort (nicht URL-kodiert).
 # Pass / Admin sind URL-kodiert und würden den Miniserver-Auth-Hash korrumpieren.
 # ---------------------------------------------------------------------------
-my %ms = LoxBerry::System::get_miniservers();
-unless ($ms{1} && $ms{1}{Admin_RAW} && $ms{1}{Pass_RAW}) {
-    LOGCRIT("Miniserver #1 nicht konfiguriert oder fehlende Admin/Pass-Credentials");
+my $ms_nr = ($cfg->{mqtt}{miniserver} // 1) + 0;
+my %ms    = LoxBerry::System::get_miniservers();
+unless ($ms{$ms_nr} && $ms{$ms_nr}{Admin_RAW} && $ms{$ms_nr}{Pass_RAW}) {
+    LOGCRIT("Miniserver #$ms_nr nicht konfiguriert oder fehlende Admin/Pass-Credentials");
     exit 1;
 }
-my $lox_user = $ms{1}{Admin_RAW};
-my $lox_pass = $ms{1}{Pass_RAW};
-LOGINF("lox-audioserver Benutzer: $lox_user");
+my $lox_user = $ms{$ms_nr}{Admin_RAW};
+my $lox_pass = $ms{$ms_nr}{Pass_RAW};
+LOGINF("Miniserver #$ms_nr ($ms{$ms_nr}{Name}) – Benutzer: $lox_user");
 
 # ---------------------------------------------------------------------------
 # MQTT-Verbindung mit LWT
