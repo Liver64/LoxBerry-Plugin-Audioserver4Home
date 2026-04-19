@@ -38,13 +38,23 @@ fi
 # Stop services before chown (only on upgrade, skipped silently on first install)
 CONFIGDIR="$ARGV5/config/plugins/$ARGV3"
 
-echo "<INFO> Stopping MQTT Gateway..."
-pkill -f "loxaudioserver_mqtt.pl" 2>/dev/null
-echo "<OK> MQTT Gateway stopped."
-
+# Stop Lox-Audioserver
+if [ ! -f "$CONFIGDIR/as_stopped.cfg" ]; then
+	touch "$CONFIGDIR/as_stopped.cfg"
+	touch "$CONFIGDIR/as_stopped_changed.cfg"
+fi
 echo "<INFO> Stopping Lox-Audioserver..."
 sudo docker compose -f "$CONFIGDIR/docker-compose.yml" down 2>/dev/null
 echo "<OK> Lox-Audioserver stopped."
+
+# Stop MQTT Gateway
+if [ ! -f "$CONFIGDIR/gw_stopped.cfg" ]; then
+	touch "$CONFIGDIR/gw_stopped.cfg"
+	touch "$CONFIGDIR/gw_stopped_changed.cfg"
+fi
+echo "<INFO> Stopping MQTT Gateway..."
+pkill -f "loxaudioserver_mqtt.pl" 2>/dev/null
+echo "<OK> MQTT Gateway stopped."
 
 # Chown data and config folders
 echo "<INFO> Correcting Ownership of Data Folder..."
