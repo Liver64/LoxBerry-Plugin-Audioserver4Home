@@ -40,17 +40,18 @@ CONFIGDIR="$ARGV5/config/plugins/$ARGV3"
 
 echo "<INFO> Stopping MQTT Gateway..."
 pkill -f "loxaudioserver_mqtt.pl" 2>/dev/null
-echo "1" > "$CONFIGDIR/gw_stopped.cfg"
+touch "$CONFIGDIR/gw_stopped.cfg"
 echo "<OK> MQTT Gateway stopped."
 
 echo "<INFO> Stopping Lox-Audioserver..."
 sudo docker compose -f "$CONFIGDIR/docker-compose.yml" down 2>/dev/null
-echo "1" > "$CONFIGDIR/as_stopped.cfg"
+touch "$CONFIGDIR/as_stopped.cfg"
 echo "<OK> Lox-Audioserver stopped."
 
-# Chown data folder
+# Chown data and config folders
 echo "<INFO> Correcting Ownership of Data Folder..."
 chown -R loxberry:loxberry $ARGV5/data/plugins/$ARGV3/*
+chown -R loxberry:loxberry $ARGV5/config/plugins/$ARGV3/*
 
 # Exit with Status 0
 exit 0
