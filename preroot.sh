@@ -35,20 +35,18 @@ else
 	echo "<OK> Seems that Docker is already installed. Do nothing."
 fi
 
-# Stop services before chown (only on upgrade, scripts may not exist on first install)
-BINDIR="$ARGV5/bin/plugins/$ARGV3"
+# Stop services before chown (only on upgrade, skipped silently on first install)
+CONFIGDIR="$ARGV5/config/plugins/$ARGV3"
 
-if [ -f "$BINDIR/gw_watchdog.pl" ]; then
-	echo "<INFO> Stopping MQTT Gateway..."
-	perl "$BINDIR/gw_watchdog.pl" --action=stop
-	echo "<OK> MQTT Gateway stopped."
-fi
+echo "<INFO> Stopping MQTT Gateway..."
+pkill -f "loxaudioserver_mqtt.pl" 2>/dev/null
+echo "1" > "$CONFIGDIR/gw_stopped.cfg"
+echo "<OK> MQTT Gateway stopped."
 
-if [ -f "$BINDIR/as_watchdog.pl" ]; then
-	echo "<INFO> Stopping Lox-Audioserver..."
-	perl "$BINDIR/as_watchdog.pl" --action=stop
-	echo "<OK> Lox-Audioserver stopped."
-fi
+echo "<INFO> Stopping Lox-Audioserver..."
+sudo docker compose -f "$CONFIGDIR/docker-compose.yml" down 2>/dev/null
+echo "1" > "$CONFIGDIR/as_stopped.cfg"
+echo "<OK> Lox-Audioserver stopped."
 
 # Chown data folder
 echo "<INFO> Correcting Ownership of Data Folder..."
