@@ -35,5 +35,9 @@ else
 	echo "<OK> Seems that Docker is already installed. Do nothing."
 fi
 
+# Chown data folder
+echo "<INFO> Correcting Ownership of Data Folder..."
+chown -R loxberry:loxberry $ARGV5/data/plugins/$ARGV3/*
+
 # Exit with Status 0
 exit 0
