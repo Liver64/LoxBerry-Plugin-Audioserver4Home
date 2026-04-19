@@ -135,6 +135,9 @@ if( $q->{action} eq "saveasettings" ) {
 		if ( $@ ) {
 			$error = "Could not save settings: $@";
 		} else {
+			if ( defined $q->{internal} && $q->{internal} == 0 ) {
+				system("$lbpbindir/as_watchdog.pl --action=stop > /dev/null 2>&1 &");
+			}
 			# Save version to docker-compose.yml if provided and valid
 			if ( defined $q->{version} && $q->{version} =~ /^[\w.\-]+$/ ) {
 				my $compose = LoxBerry::System::read_file("$lbpconfigdir/docker-compose.yml");
