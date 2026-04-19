@@ -3,7 +3,7 @@
 $(function() {
 
 	if (document.getElementById("asservicestatus")) {
-		interval = window.setInterval(function(){ asservicestatus(); }, 5000);
+		interval = window.setInterval(function(){ asservicestatus(); }, 3000);
 		asservicestatus();
 	}
 
@@ -246,6 +246,11 @@ function getconfig() {
 			var checked = as.internal ? true : false;
 			$("#as_internal").prop("checked", checked);
 			try { $("#as_internal").flipswitch("refresh"); } catch(e) {}
+			if (!checked) {
+				clearInterval(interval);
+				interval = window.setInterval(function(){ asservicestatus(); }, 10000);
+				$("#as_btn_restart, #as_btn_stop").addClass("ui-disabled").attr("disabled", true);
+			}
 		}
 		// Populate gateway settings form if present
 		if (document.getElementById("gw_basetopic") && data.mqtt) {
