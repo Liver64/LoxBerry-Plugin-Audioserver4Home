@@ -11,14 +11,16 @@ function as_apply_ui_state(isInternal) {
 		as_interval = window.setInterval(function(){ asservicestatus(); }, 3000);
 		$("#as_btn_restart, #as_btn_stop").removeClass("ui-disabled").removeAttr("disabled");
 		try { $("#as_version").selectmenu("enable"); } catch(e) {}
-		$("#as_host").val("localhost").prop("disabled", true);
-		$("#as_port").val("7092").prop("disabled", true);
+		$("#as_host").val("localhost");
+		$("#as_port").val("7092");
+		try { $("#as_host").textinput("disable"); } catch(e) { $("#as_host").prop("disabled", true); }
+		try { $("#as_port").textinput("disable"); } catch(e) { $("#as_port").prop("disabled", true); }
 	} else {
 		as_interval = window.setInterval(function(){ asservicestatus(); }, 10000);
 		$("#as_btn_restart, #as_btn_stop").addClass("ui-disabled").attr("disabled", true);
 		try { $("#as_version").selectmenu("disable"); } catch(e) {}
-		$("#as_host").prop("disabled", false);
-		$("#as_port").prop("disabled", false);
+		try { $("#as_host").textinput("enable"); } catch(e) { $("#as_host").prop("disabled", false); }
+		try { $("#as_port").textinput("enable"); } catch(e) { $("#as_port").prop("disabled", false); }
 	}
 	try { $("#as_internal").flipswitch("refresh"); } catch(e) {}
 }
