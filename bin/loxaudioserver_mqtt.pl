@@ -34,6 +34,9 @@ my $log = LoxBerry::Log->new(
     addtime => 1,
     stdout  => $verbose,
 );
+if ($verbose) {
+    $log->loglevel(7);
+}
 $log->LOGSTART('lox-audioserver MQTT Gateway gestartet');
 
 # ---------------------------------------------------------------------------
