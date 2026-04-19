@@ -84,7 +84,7 @@ function asservicerestart() {
 		} else {
 			$("#asservicestatus").attr("style", "background:#dfdfdf; color:red").html("<TMPL_VAR "COMMON.HINT_FAILED">");
 		}
-		interval = window.setInterval(function(){ asservicestatus(); }, 5000);
+		interval = window.setInterval(function(){ asservicestatus(); }, 3000);
 	})
 	.always(function( data ) {
 		console.log( "Servicerestart Finished", data );
@@ -115,7 +115,7 @@ function asservicestop() {
 		} else {
 			$("#asservicestatus").attr("style", "background:#dfdfdf; color:red").html("<TMPL_VAR "COMMON.HINT_FAILED">");
 		}
-		interval = window.setInterval(function(){ asservicestatus(); }, 5000);
+		interval = window.setInterval(function(){ asservicestatus(); }, 3000);
 	})
 	.always(function( data ) {
 		console.log( "Servicestop Finished", data );
