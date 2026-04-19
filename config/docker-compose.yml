@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     network_mode: host
     volumes:
-      - REPLACELBPCONFIGDIR/data:/app/data
+      - REPLACELBPDATADIR/data:/app/data
     # privileged caps (and security-opt) needed to mount smb folders within the container
     cap_add:
       - SYS_ADMIN
