@@ -40,12 +40,10 @@ CONFIGDIR="$ARGV5/config/plugins/$ARGV3"
 
 echo "<INFO> Stopping MQTT Gateway..."
 pkill -f "loxaudioserver_mqtt.pl" 2>/dev/null
-touch "$CONFIGDIR/gw_stopped.cfg"
 echo "<OK> MQTT Gateway stopped."
 
 echo "<INFO> Stopping Lox-Audioserver..."
 sudo docker compose -f "$CONFIGDIR/docker-compose.yml" down 2>/dev/null
-touch "$CONFIGDIR/as_stopped.cfg"
 echo "<OK> Lox-Audioserver stopped."
 
 # Chown data and config folders
