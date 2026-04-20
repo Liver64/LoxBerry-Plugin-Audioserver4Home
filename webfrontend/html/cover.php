@@ -58,6 +58,35 @@ if ($cover_url) {
     $cover_url = rewrite_tunein_url($cover_url);
 }
 
+// ── No GD: proxy raw bytes without resize ─────────────────────
+if (!extension_loaded('gd')) {
+    header('Cache-Control: no-store');
+    if ($cover_url) {
+        $ctx  = stream_context_create(['http' => ['timeout' => 5, 'follow_location' => true]]);
+        $data = @file_get_contents($cover_url, false, $ctx);
+        if ($data) {
+            $mime = 'image/jpeg';
+            $finfo = @finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo) {
+                $detected = @finfo_buffer($finfo, $data);
+                finfo_close($finfo);
+                if ($detected) $mime = $detected;
+            }
+            header('Content-Type: ' . $mime);
+            echo $data;
+            exit;
+        }
+    }
+    $default = __DIR__ . '/defaultcover.jpg';
+    if (file_exists($default)) {
+        header('Content-Type: image/jpeg');
+        readfile($default);
+        exit;
+    }
+    http_response_code(404);
+    exit;
+}
+
 // ── Image loading ──────────────────────────────────────────────
 function load_image_from_url($url)
 {
