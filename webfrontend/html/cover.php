@@ -1,6 +1,6 @@
 <?php
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
+ini_set('display_errors', '0');
+error_reporting(0);
 // cover.php — Serve resized album cover for a given zone
 
 // ── GET parameters ────────────────────────────────────────────
@@ -14,16 +14,16 @@ if (!in_array($format, ['jpg', 'png'], true)) {
 
 // ── Size parsing ───────────────────────────────────────────────
 // Returns [width, height] where 0 means "calculate proportionally"
-function parse_size(string $size): array
+function parse_size($size)
 {
-    if (preg_match('/^(\d+)x(\d+)$/', $size, $m)) return [(int)$m[1], (int)$m[2]];
-    if (preg_match('/^(\d+)x$/',      $size, $m)) return [(int)$m[1], 0];
-    if (preg_match('/^x(\d+)$/',      $size, $m)) return [0, (int)$m[1]];
-    if (preg_match('/^(\d+)$/',       $size, $m)) return [(int)$m[1], 0];
-    return [500, 0];
+    if (preg_match('/^(\d+)x(\d+)$/', $size, $m)) return array((int)$m[1], (int)$m[2]);
+    if (preg_match('/^(\d+)x$/',      $size, $m)) return array((int)$m[1], 0);
+    if (preg_match('/^x(\d+)$/',      $size, $m)) return array(0, (int)$m[1]);
+    if (preg_match('/^(\d+)$/',       $size, $m)) return array((int)$m[1], 0);
+    return array(500, 0);
 }
 
-[$req_w, $req_h] = parse_size($size);
+list($req_w, $req_h) = parse_size($size);
 
 // ── Read coverUrl from SHM ─────────────────────────────────────
 $cover_url = null;
@@ -45,7 +45,7 @@ if ($zone_id !== null) {
 // ── TuneIn URL rewrite ─────────────────────────────────────────
 // cdn-profiles.tunein.com: replace logo<x><ext> with logog<ext>
 // e.g. logod.jpg -> logog.jpg
-function rewrite_tunein_url(string $url): string
+function rewrite_tunein_url($url)
 {
     $host = parse_url($url, PHP_URL_HOST);
     if ($host === 'cdn-profiles.tunein.com') {
@@ -59,7 +59,7 @@ if ($cover_url) {
 }
 
 // ── Image loading ──────────────────────────────────────────────
-function load_image_from_url(string $url)
+function load_image_from_url($url)
 {
     $ctx  = stream_context_create(['http' => ['timeout' => 5, 'follow_location' => true]]);
     $data = @file_get_contents($url, false, $ctx);
