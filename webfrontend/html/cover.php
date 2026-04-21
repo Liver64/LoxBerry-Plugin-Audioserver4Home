@@ -16,11 +16,11 @@ if (!in_array($format, ['jpg', 'png'], true)) {
 // Returns [width, height] where 0 means "calculate proportionally"
 function parse_size($size)
 {
-    if (preg_match('/^(\d+)x(\d+)$/', $size, $m)) return array((int)$m[1], (int)$m[2]);
-    if (preg_match('/^(\d+)x$/',      $size, $m)) return array((int)$m[1], 0);
-    if (preg_match('/^x(\d+)$/',      $size, $m)) return array(0, (int)$m[1]);
-    if (preg_match('/^(\d+)$/',       $size, $m)) return array((int)$m[1], 0);
-    return array(500, 0);
+    if (preg_match('/^(\d+)x(\d+)$/', $size, $m)) return [(int)$m[1], (int)$m[2]];
+    if (preg_match('/^(\d+)x$/',      $size, $m)) return [(int)$m[1], 0];
+    if (preg_match('/^x(\d+)$/',      $size, $m)) return [0, (int)$m[1]];
+    if (preg_match('/^(\d+)$/',       $size, $m)) return [(int)$m[1], 0];
+    return [500, 0];
 }
 
 list($req_w, $req_h) = parse_size($size);
@@ -73,6 +73,7 @@ if (!extension_loaded('gd')) {
                 if ($detected) $mime = $detected;
             }
             header('Content-Type: ' . $mime);
+            header('Content-Length: ' . strlen($data));
             echo $data;
             exit;
         }
@@ -80,6 +81,7 @@ if (!extension_loaded('gd')) {
     $default = __DIR__ . '/defaultcover.jpg';
     if (file_exists($default)) {
         header('Content-Type: image/jpeg');
+        header('Content-Length: ' . filesize($default));
         readfile($default);
         exit;
     }
@@ -151,13 +153,40 @@ if (!$resized) {
     exit;
 }
 
-// ── Output ─────────────────────────────────────────────────────
-header('Cache-Control: no-store');
+// ── Build image in memory ──────────────────────────────────────
+ob_start();
 if ($format === 'png') {
-    header('Content-Type: image/png');
+    $content_type = 'image/png';
     imagepng($resized);
 } else {
-    header('Content-Type: image/jpeg');
+    $content_type = 'image/jpeg';
     imagejpeg($resized, null, 90);
 }
-if ($resized) imagedestroy($resized);
+$image_data = ob_get_clean();
+imagedestroy($resized);
+
+if ($image_data === false || $image_data === '') {
+    http_response_code(500);
+    exit;
+}
+
+// ── ETag / conditional GET ─────────────────────────────────────
+$etag          = '"' . md5($image_data) . '"';
+$last_modified = gmdate('D, d M Y H:i:s') . ' GMT';
+
+header('ETag: ' . $etag);
+header('Last-Modified: ' . $last_modified);
+header('Cache-Control: no-store');
+
+if (
+    (isset($_SERVER['HTTP_IF_NONE_MATCH'])     && trim($_SERVER['HTTP_IF_NONE_MATCH'])     === $etag) ||
+    (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && trim($_SERVER['HTTP_IF_MODIFIED_SINCE']) === $last_modified)
+) {
+    http_response_code(304);
+    exit;
+}
+
+// ── Output ─────────────────────────────────────────────────────
+header('Content-Type: ' . $content_type);
+header('Content-Length: ' . strlen($image_data));
+echo $image_data;
