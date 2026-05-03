@@ -285,12 +285,11 @@ function gwservicestop() {
 function getconfig() {
 
 	// Ajax request
-	$.ajax({ 
-		url:  '<TMPL_VAR AJAX_URL>',
-		type: 'POST',
-		data: {
-			action: 'getconfig'
-		}
+	$.ajax({
+		url:      '<TMPL_VAR AJAX_URL>',
+		type:     'POST',
+		data:     { action: 'getconfig' },
+		dataType: 'json'
 	})
 	.fail(function( data ) {
 		console.log( "getconfig Fail", data );
@@ -368,17 +367,18 @@ function as_save_settings() {
 
 	if (!_autosave_enabled) return;
 	$("#as_savinghint").attr("style", "color:blue").html("<TMPL_VAR "COMMON.HINT_SAVING">");
-	$.ajax( {
-			url:  '<TMPL_VAR AJAX_URL>',
-			type: 'POST',
-			data: {
-				action:   'saveasettings',
-				internal: $("#as_internal").is(":checked") ? 1 : 0,
-				host:     $("#as_host").val(),
-				port:     $("#as_port").val(),
-				version:  $("#as_version").val()
-			}
-		} )
+	$.ajax({
+		url:      '<TMPL_VAR AJAX_URL>',
+		type:     'POST',
+		dataType: 'json',
+		data: {
+			action:   'saveasettings',
+			internal: $("#as_internal").is(":checked") ? 1 : 0,
+			host:     $("#as_host").val(),
+			port:     $("#as_port").val(),
+			version:  $("#as_version").val()
+		}
+	})
 	.fail(function( data ) {
 		console.log( "as_save_settings Fail", data );
 		$("#as_savinghint").attr("style", "color:red").html("<TMPL_VAR "COMMON.HINT_SAVING_FAILED">");
@@ -438,17 +438,18 @@ function gw_save_settings() {
 
 	if (!_autosave_enabled) return;
 	$("#gw_savinghint").attr("style", "color:blue").html("<TMPL_VAR "COMMON.HINT_SAVING">");
-	$.ajax( {
-			url:  '<TMPL_VAR AJAX_URL>',
-			type: 'POST',
-			data: {
-				action:       'savegwsettings',
-				basetopic:    $("#gw_basetopic").val(),
-				polling:      $("#gw_polling").val(),
-				polling_slow: $("#gw_polling_slow").val(),
-				miniserver:   $("#gw_miniserver").val()
-			}
-		} )
+	$.ajax({
+		url:      '<TMPL_VAR AJAX_URL>',
+		type:     'POST',
+		dataType: 'json',
+		data: {
+			action:       'savegwsettings',
+			basetopic:    $("#gw_basetopic").val(),
+			polling:      $("#gw_polling").val(),
+			polling_slow: $("#gw_polling_slow").val(),
+			miniserver:   $("#gw_miniserver").val()
+		}
+	})
 	.fail(function( data ) {
 		console.log( "gw_save_settings Fail", data );
 		$("#gw_savinghint").attr("style", "color:red").html("<TMPL_VAR "COMMON.HINT_SAVING_FAILED">");
